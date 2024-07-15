@@ -14,6 +14,8 @@ Vagrant.configure("2") do |config|
     vb.functional_vboxsf = false
   end
 
+  config.vm.network "private_network", ip: ENV['VM_IP']
+
   config.vm.define ENV['VM_NAME'] do |server|
     server.vm.hostname = ENV['VM_NAME']
 

@@ -3,6 +3,11 @@ variable "vm_count" {
   type        = number
 }
 
+variable "vm_ips" {
+  description = "IP list of VMs"
+  type        = list(string)
+}
+
 variable "vm_cpus" {
   description = "Number of CPUs per VM"
   type        = number

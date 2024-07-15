@@ -18,7 +18,15 @@ terraform init
 terraform apply
 terraform output -json > outputs.json
 
-ssh vagrant@127.0.0.1 -p 2200
+ssh vagrant@192.168.56.10 -p 22
+```
+
+## Ansible
+
+```bash
+ansible-playbook -i inventory/hosts.ini playbooks/check_connection.yaml
+
+
 ```
 
 ## Roadmap

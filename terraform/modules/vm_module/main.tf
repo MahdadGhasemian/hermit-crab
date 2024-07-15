@@ -6,6 +6,7 @@ resource "vagrant_vm" "vm" {
     VM_CPUS          = var.vm_cpus,
     VM_MEMORY        = var.vm_memory,
     VM_NAME          = "${var.vm_name_prefix}-${count.index + 1}"
+    VM_IP            = "${var.vm_ips[count.index]}"
   }
 
   get_ports = true
