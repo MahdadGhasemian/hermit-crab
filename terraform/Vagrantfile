@@ -1,0 +1,27 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/jammy64"
+
+  config.ssh.insert_key = false
+
+  config.vm.provider :virtualbox do |vb|
+    vb.gui = false
+    vb.cpus = ENV['VM_CPUS'].to_i
+    vb.memory = ENV['VM_MEMORY'].to_i
+    vb.check_guest_additions = false
+    vb.functional_vboxsf = false
+  end
+
+  config.vm.define ENV['VM_NAME'] do |server|
+    server.vm.hostname = ENV['VM_NAME']
+
+    server.vm.synced_folder "/home/asus-mahdad/.ssh/vagrant_local", "/vagrant"
+
+    server.vm.provision "shell", inline: <<-SHELL
+      cat /vagrant/id_rsa_vagrant_local_vms.pub >> /home/vagrant/.ssh/authorized_keys
+    SHELL
+  end
+
+end
