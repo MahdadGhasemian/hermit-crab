@@ -10,25 +10,6 @@ Hermit crabs change shells as they grow, always adapting to new infrastructure n
 
 Hermit Crab is a project designed to configure, deploy and manage Kubernetes clusters on bare-metal infrastructure using Ansible and Terraform.
 
-## Terraform
-
-```bash
-cd terraform
-terraform init
-terraform apply
-terraform output -json > outputs.json
-
-ssh vagrant@192.168.56.10 -p 22
-```
-
-## Ansible
-
-```bash
-ansible-playbook -i inventory/hosts.ini playbooks/check_connection.yaml
-
-
-```
-
 ## Roadmap
 
 - [ ] Init Terraform To create development infrestrucure on vagrant
