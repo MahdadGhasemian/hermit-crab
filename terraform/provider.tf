@@ -10,12 +10,12 @@ terraform {
 
 # Kubernets Provider
 provider "kubernetes" {
-  config_path = "./k3s_kubeconfig.yaml"
+  config_path = "./k3s_kubeconfig.yml"
 }
 
 # Helm Provider
 provider "helm" {
   kubernetes {
-    config_path = "./k3s_kubeconfig.yaml"
+    config_path = "./k3s_kubeconfig.yml"
   }
 }

@@ -37,4 +37,6 @@ override.tf.json
 terraform.rc
 clustername_kubeconfig.yaml
 cluster_kubeconfig.yaml
-k3s_kubeconfig.yaml
+k3s_kubeconfig.*
+
+.terraform.lock.hcl

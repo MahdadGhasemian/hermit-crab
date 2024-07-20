@@ -40,7 +40,11 @@ If needed, you can also edit `vars` section at the bottom to match your environm
 Start provisioning of the cluster using the following command:
 
 ```bash
-ansible-playbook k3s-ansible/playbooks/site.yml -i k3s-ansible/inventory.yml
+cd k3s-ansible
+ansible-playbook playbooks/site.yml -i inventory.yml
+cp ~/.kube/config ~/.kube/config-copy && cp ~/.kube/config.new ~/.kube/config
+kubectl config use-context k3s-ansible
+cd ..
 ```
 
 Now it's time to edit the `terraform/terraform.tfvars` file to match your kubernetes setup. For example:
