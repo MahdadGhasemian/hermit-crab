@@ -91,6 +91,26 @@ terraform init
 terraform apply
 ```
 
+### Authentications
+
+Argocd authentication:
+
+```bash
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+```
+
+Redis authentication:
+
+```bash
+kubectl get secret --namespace redis redis -o jsonpath="{.data.redis-password}" | base64 -d
+```
+
+Redis connection:
+
+- host: redis-master
+- port: 6379
+- username: leave it empty (default)
+
 ## Roadmap
 
 - [ ] Init Terraform To create development infrestrucure on vagrant
