@@ -111,6 +111,81 @@ Redis connection:
 - port: 6379
 - username: leave it empty (default)
 
+## Minio
+
+```bash
+cd minio-ansible
+ansible-galaxy install -r requirements.yml
+ansible-playbook playbooks/minio_setup.yml -i inventory.yml
+```
+
+Note:
+
+- Minio UI > Configuration > Region > set "us-east-1"
+- Minio UI > Access Keys > Create access key (Write down the Access key and Secret Key)
+- Minio UI > Buckets > Create Bucket
+
+```yaml
+Bucket Name: longhorn
+```
+
+- Minio UI > Buckets > choose longhorn bucket > change `Access Policy` to `Public`
+
+- Longhorn UI > Setting > General
+
+```yaml
+Backup Target: s3://longhorn@us-east-1/
+Backup Target Credential Secret: longhorn-minio-secret
+```
+
+- Create and Add secret to kubernetes
+
+```tf
+resource "kubernetes_manifest" "longhorn_minio_secret" {
+  manifest = {
+    apiVersion = "v1",
+    kind       = "Secret",
+    metadata = {
+      name      = "longhorn-minio-secret"
+      namespace = "longhorn-system"
+    },
+    type = "Opaque"
+    data = {
+      AWS_ACCESS_KEY_ID     = var.longhorn_minio_aws_access_key_id
+      AWS_SECRET_ACCESS_KEY = var.longhorn_minio_aws_secret_access_key
+      AWS_ENDPOINTS         = var.longhorn_minio_aws_endpoint
+    }
+  }
+
+  depends_on = [module.longhorn]
+}
+```
+
+- backup1-always
+
+## Restore Backup
+
+For instnce restore postgresql data
+
+- Scale down
+
+```bash
+kubectl scale statefulset.apps/postgresql --replicas=0 -n postgresql
+```
+
+- use the Longhorn GUI to restore the backup to a new volume (named appropriately). For instance `restored-data-1`
+- Wait for the restore to finish.
+- Delete the old Volume by Longhorn GUI.
+- Create PV/PVC
+- Wait until the PV/PVC being available.
+- Scale up
+
+```bash
+kubectl scale statefulset.apps/postgresql --replicas=1 -n postgresql
+```
+
+For instnce restore redis data
+
 ## Roadmap
 
 - [ ] Init Terraform To create development infrestrucure on vagrant

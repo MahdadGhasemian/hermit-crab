@@ -1,0 +1,53 @@
+---
+- name: Install NGINX
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Create SSL directory
+  file:
+    path: /etc/nginx/ssl/{{ item.domain }}
+    state: directory
+    mode: "0755"
+  loop: "{{ domains }}"
+
+- name: Copy SSL certificate
+  copy:
+    src: files/{{ item.domain }}/ssl_certificate.crt
+    dest: /etc/nginx/ssl/{{ item.domain }}/ssl_certificate.crt
+    mode: "0644"
+  loop: "{{ domains }}"
+
+- name: Copy SSL key
+  copy:
+    src: files/{{ item.domain }}/ssl_certificate.key
+    dest: /etc/nginx/ssl/{{ item.domain }}/ssl_certificate.key
+    mode: "0600"
+  loop: "{{ domains }}"
+
+- name: Deploy NGINX configuration
+  template:
+    src: templates/nginx.conf.j2
+    dest: /etc/nginx/sites-available/{{ item.domain }}
+    mode: "0644"
+  loop: "{{ domains }}"
+
+- name: Enable NGINX configuration
+  file:
+    src: /etc/nginx/sites-available/{{ item.domain }}
+    dest: /etc/nginx/sites-enabled/{{ item.domain }}
+    state: link
+  loop: "{{ domains }}"
+
+- name: Remove default NGINX configuration
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Test NGINX configuration
+  command: nginx -t
+  register: nginx_test
+  failed_when: nginx_test.rc != 0
+  notify:
+    - reload nginx

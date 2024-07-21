@@ -33,6 +33,21 @@ variable "longhorn_users_secret" {
   description = "Longhorn Login Secret"
 }
 
+# Longhorn Minio Auth
+variable "longhorn_minio_aws_access_key_id" {
+  description = "AWS Access Key Id"
+}
+
+# Longhorn Minio Auth
+variable "longhorn_minio_aws_secret_access_key" {
+  description = "AWS Secret Access Key"
+}
+
+# Longhorn Minio Auth
+variable "longhorn_minio_aws_endpoint" {
+  description = "Minio AWS Endpoint"
+}
+
 # Postgresql Host name
 variable "postgresql_hostname" {
   description = "Hostname for Postgresql IngressRoute"

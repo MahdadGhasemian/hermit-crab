@@ -1,0 +1,20 @@
+---
+minio:
+  children:
+    minio-server:
+      hosts:
+        192.16.35.14:
+
+  # Required Vars
+  vars:
+    ansible_port: 22
+    ansible_user: root
+    ansible_ssh_private_key_file: ~/.ssh/id_rsa
+
+    minio_server_domain: minio-test-server.example.com
+    minio_server_port: 9000
+    minio_console_domain: minio-test.example.com
+    minio_console_port: 9001
+
+    minio_server_release_full: "RELEASE.2024-07-16T23-46-41Z"
+    minio_client_release_full: "RELEASE.2024-07-15T17-46-06Z"

@@ -1,0 +1,6 @@
+# Install a role from the Ansible Galaxy
+# - src: minio
+
+# Install a role from GitHub
+- name: minio
+  src: https://github.com/minio/ansible-minio

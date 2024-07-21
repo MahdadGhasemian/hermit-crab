@@ -1,0 +1,10 @@
+venv
+.venv
+.vscode
+.vagrant
+inventory.yml
+playbook/debug.yml
+roles/minio
+
+**/ssl_certificate.crt
+**/ssl_certificate.key
