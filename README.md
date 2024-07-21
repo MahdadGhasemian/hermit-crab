@@ -184,8 +184,6 @@ kubectl scale statefulset.apps/postgresql --replicas=0 -n postgresql
 kubectl scale statefulset.apps/postgresql --replicas=1 -n postgresql
 ```
 
-For instnce restore redis data
-
 ## Roadmap
 
 - [ ] Init Terraform To create development infrestrucure on vagrant
