@@ -1,0 +1,5 @@
+---
+- name: Ensure open-iscsi is installed
+  ansible.builtin.apt:
+    name: open-iscsi
+    state: present

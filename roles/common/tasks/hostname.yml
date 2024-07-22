@@ -1,0 +1,33 @@
+---
+- name: Set the new hostname
+  ansible.builtin.hostname:
+    name: "{{ host_hostname }}"
+
+- name: Update /etc/hostname with the new hostname
+  ansible.builtin.lineinfile:
+    path: /etc/hostname
+    line: "{{ host_hostname }}"
+    state: present
+
+- name: Update /etc/hosts with the new hostname
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: '127.0.1.1\s+.*'
+    line: "127.0.1.1   {{ host_hostname }}"
+    state: present
+
+- name: Apply the new hostname immediately
+  command: hostnamectl set-hostname {{ host_hostname }}
+
+- name: Restart the systemd-hostnamed service
+  ansible.builtin.systemd:
+    name: systemd-hostnamed
+    state: restarted
+
+- name: Print the new hostname to verify
+  command: hostname
+  register: hostname_output
+
+- name: Show the new hostname
+  debug:
+    msg: "The new hostname is {{ hostname_output.stdout }}"

@@ -17,9 +17,10 @@ k3s_cluster:
     ansible_port: 22
     ansible_user: root
     ansible_ssh_private_key_file: ~/.ssh/id_rsa.pub
-    k3s_version: v1.26.9+k3s1
+    k3s_version: v1.29.6+k3s1
     # The token should be a random string of reasonable length. You can generate
     # one with the following commands:
+    # - tr -cd A-Za-z0-9 </dev/urandom | head -c "64" ; echo ""
     # - openssl rand -base64 64
     # - pwgen -s 64 1
     # You can use ansible-vault to encrypt this value / keep it secret.
@@ -27,6 +28,8 @@ k3s_cluster:
     api_endpoint: "{{ hostvars[groups['server'][0]]['ansible_host'] | default(groups['server'][0]) }}"
     extra_server_args: ""
     extra_agent_args: ""
+    kubeconfig: "~/.kube/config.new"
+    kubeconfig_terraform: "{{ playbook_dir }}/../terraform/k3s_kubeconfig.yml"
 
     # Optional vars
 
@@ -50,3 +53,26 @@ k3s_cluster:
     #   Containerd can be configured to connect to private registries and use them to pull images as needed by the kubelet.
     #   YAML here will be placed as the content of /etc/rancher/k3s/registries.yaml
     #   See https://docs.k3s.io/installation/private-registry
+---
+minio:
+  children:
+    minio-server:
+      hosts:
+        192.16.35.14:
+
+  # Required Vars
+  vars:
+    ansible_port: 22
+    ansible_user: root
+    ansible_ssh_private_key_file: ~/.ssh/id_rsa
+
+    minio_server_domain: minio-test-server.example.com
+    minio_server_port: 9000
+    minio_console_domain: minio-test.example.com
+    minio_console_port: 9001
+
+    minio_server_release_full: "RELEASE.2024-07-16T23-46-41Z"
+    minio_client_release_full: "RELEASE.2024-07-15T17-46-06Z"
+
+    minio_username: "minioadmin"
+    minio_password: "minioadmin"

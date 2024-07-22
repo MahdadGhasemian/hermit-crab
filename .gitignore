@@ -4,3 +4,8 @@ venv
 .vagrant
 inventory.yml
 playbook/debug.yml
+
+**/minio-test.devopsuser.ir
+**/minio-test-server.devopsuser.ir
+
+roles/minio

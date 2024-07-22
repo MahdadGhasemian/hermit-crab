@@ -1,0 +1,37 @@
+- name: "config :: disables system swap"
+  become: true
+  ansible.builtin.shell: "swapoff -a"
+
+- name: "config :: removes current swaps from the filesystem tab"
+  become: true
+  ansible.builtin.lineinfile:
+    path: "/etc/fstab"
+    regexp: '(?i)^([^#][\S]+\s+(none|swap)\s+swap.*)'
+    line: '# \1'
+    backrefs: true
+    state: present
+
+- name: "install :: updates package lists"
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    force_apt_get: true
+
+- name: "install :: upgrades package lists"
+  become: true
+  ansible.builtin.apt:
+    upgrade: full
+    force_apt_get: true
+
+- name: "install :: installs the required Linux packages"
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - apt-transport-https
+      - curl
+      - gnupg2
+      - software-properties-common
+      - ca-certificates
+      - apt-utils
+      - nfs-common
+    force_apt_get: true

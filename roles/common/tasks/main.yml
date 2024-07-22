@@ -1,0 +1,11 @@
+- name: "common :: includes the configuration tasks"
+  ansible.builtin.include_tasks:
+    file: "config.yml"
+
+- name: "common :: include the hostname task"
+  ansible.builtin.include_tasks:
+    file: "hostname.yml"
+
+- name: "common :: include the longhorn required task"
+  ansible.builtin.include_tasks:
+    file: "longhorn.yml"

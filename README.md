@@ -18,7 +18,7 @@ First Init project
 ./init.sh
 ```
 
-Second edit the `k3s-ansible/inventory.yml` file to match your cluster setup. For example:
+Second edit the `inventory.yml` file to match your cluster setup. For example:
 
 ```bash
 k3s_cluster:
@@ -40,7 +40,7 @@ If needed, you can also edit `vars` section at the bottom to match your environm
 Start provisioning of the cluster using the following command:
 
 ```bash
-cd k3s-ansible
+ansible-playbook playbooks/check_connection.yml -i inventory.yml
 ansible-playbook playbooks/site.yml -i inventory.yml
 cp ~/.kube/config ~/.kube/config-copy && cp ~/.kube/config.new ~/.kube/config
 kubectl config use-context k3s-ansible
@@ -112,12 +112,6 @@ Redis connection:
 - username: leave it empty (default)
 
 ## Minio
-
-```bash
-cd minio-ansible
-ansible-galaxy install -r requirements.yml
-ansible-playbook playbooks/minio_setup.yml -i inventory.yml
-```
 
 Note:
 
@@ -205,14 +199,16 @@ kubectl scale statefulset.apps/postgresql --replicas=0 -n postgresql
 kubectl scale statefulset.apps/postgresql --replicas=1 -n postgresql
 ```
 
+## Thanks 🤝
+
+Thank you to all those who have contributed and thanks to these repos for code and ideas:
+
+- [k3s-io/k3s-ansible](https://github.com/k3s-io/k3s-ansible)
+
 ## Roadmap
 
-- [ ] Init Terraform To create development infrestrucure on vagrant
-- [ ] Write Ansible palybooks
-
-## TODO
-
-- [ ]
+- [x] Write Ansible palybooks
+- [x] Write Terraform manifests
 
 ## Contributing
 

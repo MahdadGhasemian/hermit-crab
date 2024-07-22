@@ -1,0 +1,40 @@
+---
+- name: "Install Minio"
+  hosts: minio-server
+  become: true
+  gather_facts: true
+  roles:
+    - minio
+    - nginx
+  vars:
+    minio_root_username: "{{ minio_username }}"
+    minio_root_password: "{{ minio_password }}"
+    minio_server_release: "{{ minio_server_release_full }}"
+    minio_client_release: "{{ minio_client_release_full }}"
+    domains:
+      - domain: "{{ minio_server_domain }}"
+        service_port: "{{ minio_server_port }}"
+      - domain: "{{ minio_console_domain }}"
+        service_port: "{{ minio_console_port }}"
+
+- name: Cluster prep
+  hosts: k3s_cluster
+  gather_facts: true
+  become: true
+  roles:
+    - role: common
+    - role: prereq
+    - role: airgap
+    - role: raspberrypi
+
+- name: Setup K3S server
+  hosts: server
+  become: true
+  roles:
+    - role: k3s_server
+
+- name: Setup K3S agent
+  hosts: agent
+  become: true
+  roles:
+    - role: k3s_agent
