@@ -165,20 +165,41 @@ resource "kubernetes_manifest" "longhorn_minio_secret" {
 
 ## Restore Backup
 
-For instnce restore postgresql data
+Example: Restoring PostgreSQL Data
 
-- Scale down
+1- Scale down the PostgreSql StatefulSet:
 
 ```bash
 kubectl scale statefulset.apps/postgresql --replicas=0 -n postgresql
 ```
 
-- use the Longhorn GUI to restore the backup to a new volume (named appropriately). For instance `restored-data-1`
-- Wait for the restore to finish.
-- Delete the old Volume by Longhorn GUI.
-- Create PV/PVC
-- Wait until the PV/PVC being available.
-- Scale up
+2- Wait for the volume to be detached
+
+- Monitor the volume status until it is detached.
+
+3- Note the Current Volume Name:
+
+- For example `pvc-1be4dafb-399f-40d4-ac87-205eb56c2f44`.
+
+4- Delete the old Volume via Longhorn GUI.
+
+- Navigate to the longhorn GUI and delete the specified volume.
+
+5- Restore the Backup to a New Volume.
+
+- Use the Longhorn GUI to restore the backup to a new volume with the same name noted in step 3 (`pvc-1be4dafb-399f-40d4-ac87-205eb56c2f44`).
+
+6- Wait for the Rrestore process to complete.
+
+7- Create PV/PVC:
+
+- Navigate to the lonhorn GUI > Volume > at the right side of volume named `pvc-1be4dafb-399f-40d4-ac87-205eb56c2f44` open operation button > select `Create PV/PVC`
+- Ensure the `Create PVC` option is checked
+- Ensure the `Use Previous PVC` option is checked
+
+8 - Wait until the PV/PVC to be Available.
+
+9- Scale Up the PostgreSQL StatefulSet:
 
 ```bash
 kubectl scale statefulset.apps/postgresql --replicas=1 -n postgresql
