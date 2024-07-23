@@ -97,6 +97,7 @@ variable "rabbitmq_admin_password" {
   default     = ""
 }
 
+# Postgresql
 variable "postgresql_storageclass_name" {
   description = "PVC Storage Class"
   type        = string
@@ -122,6 +123,14 @@ variable "postgresql_username" {
 variable "postgresql_password" {
   description = "User Password"
   type        = string
+}
+
+# Ra Host name
+
+variable "rancher_host_name" {
+  description = "Fully qualified name to reach your Rancher server"
+  type        = string
+  default     = ""
 }
 
 variable "gitlab_certmanager_issuer_email" {
