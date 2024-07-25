@@ -76,3 +76,6 @@ minio:
 
     minio_username: "minioadmin"
     minio_password: "minioadmin"
+
+    minio_context: k3s-ansible
+    minio_note_path: "{{ playbook_dir }}/../minio_note.md"

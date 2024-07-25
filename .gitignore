@@ -11,3 +11,6 @@ playbook/debug.yml
 roles/minio
 
 note.md
+minio_note.md
+
+minio-backup

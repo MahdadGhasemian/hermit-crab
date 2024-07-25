@@ -51,3 +51,43 @@
   failed_when: nginx_test.rc != 0
   notify:
     - reload nginx
+
+- name: Set Minio alias configuration
+  set_fact:
+    minio_note: |
+      # Install minio client
+      [install link](https://min.io/download?license=agpl&platform=linux)
+
+      ## Linux AMD64 DEB:
+      ```bash
+      wget https://dl.min.io/client/mc/release/linux-amd64/mcli_20240722200249.0.0_amd64.deb
+      sudo dpkg -i mcli_20240722200249.0.0_amd64.deb
+      ```
+
+      ## Add minio server to minio alias:
+      ```bash
+      mcli alias set {{ minio_context }}/ https://{{ minio_server_domain }} {{ minio_username }} {{ minio_password }}
+      ```
+
+      ## Commands:
+
+      ### List all contents of longhorn
+      ```bash
+      mcli ls {{ minio_context }}/longhorn
+      ```
+      ### Backup to local
+      ```bash
+      mcli mirror {{ minio_context }}/longhorn ./minio-backup/longhorn --overwrite
+      ```
+
+      ### Restore from local
+      ```bash
+      mcli mirror ./minio-backup/longhorn {{ minio_context }}/longhorn --overwrite
+      ```
+
+- name: Generate {{ minio_note_path }}
+  ansible.builtin.copy:
+    content: "{{ minio_note }}"
+    dest: "{{ minio_note_path }}"
+  delegate_to: 127.0.0.1
+  become: false

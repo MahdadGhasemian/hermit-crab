@@ -33,6 +33,12 @@ k3s_cluster:
           host_hostname: agent1
         192.16.35.13:
           host_hostname: agent2
+
+minio:
+  children:
+    minio-server:
+      hosts:
+        141.11.103.117:
 ```
 
 If needed, you can also edit `vars` section at the bottom to match your environment.
@@ -158,9 +164,9 @@ resource "kubernetes_manifest" "longhorn_minio_secret" {
 }
 ```
 
-- backup1-always
+- **Note**: After config minio, run again the terraform apply to set its secret
 
-## Restore Backup
+## Restore Backup (Longhorn volumes)
 
 Example: Restoring PostgreSQL Data
 
@@ -202,6 +208,45 @@ kubectl scale statefulset.apps/postgresql --replicas=0 -n postgresql
 kubectl scale statefulset.apps/postgresql --replicas=1 -n postgresql
 ```
 
+## Minio Backup Restore (Minio <----> Local)
+
+### Install minio client
+
+[install link](https://min.io/download?license=agpl&platform=linux)
+
+**Linux AMD64 DEB:**
+
+```bash
+wget https://dl.min.io/client/mc/release/linux-amd64/mcli_20240722200249.0.0_amd64.deb
+sudo dpkg -i mcli_20240722200249.0.0_amd64.deb
+```
+
+### Add minio server to minio alias:
+
+```bash
+mcli alias set k3s-ansible/ https://minio-test-server.example.com minio_username minio_password
+```
+
+### Commands:
+
+#### List all contents of longhorn
+
+```bash
+mcli ls k3s-ansible/longhorn
+```
+
+#### Backup to local
+
+```bash
+mcli mirror k3s-ansible/longhorn path-to-your-local-backup-folder/longhorn --overwrite
+```
+
+#### Restore from local
+
+```bash
+mcli mirror path-to-your-local-backup-folder/longhorn k3s-ansible/longhorn --overwrite
+```
+
 ## Thanks 🤝
 
 Thank you to all those who have contributed and thanks to these repos for code and ideas:
@@ -212,6 +257,8 @@ Thank you to all those who have contributed and thanks to these repos for code a
 
 - [x] Write Ansible palybooks
 - [x] Write Terraform manifests
+- [x] Longhorn Backup
+- [x] Redis Backup
 
 ## Contributing
 
