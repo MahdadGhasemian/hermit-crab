@@ -9,3 +9,5 @@ playbook/debug.yml
 **/minio-test-server.devopsuser.ir
 
 roles/minio
+
+note.md
