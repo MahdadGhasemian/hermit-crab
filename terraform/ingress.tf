@@ -184,7 +184,7 @@ resource "kubernetes_manifest" "longhorn_dashboard_ingressroute" {
     apiVersion = "traefik.io/v1alpha1",
     kind       = "IngressRoute",
     metadata = {
-      name      = "traefik-dashboard",
+      name      = "longhorn-dashboard",
       namespace = "longhorn-system"
     },
     spec = {
