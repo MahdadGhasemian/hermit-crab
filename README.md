@@ -10,7 +10,9 @@ Hermit crabs change shells as they grow, always adapting to new infrastructure n
 
 Hermit Crab is a project designed to configure, deploy and manage Kubernetes clusters on bare-metal infrastructure using Ansible and Terraform.
 
-## Getting Started
+## Getting Started (Setup)
+
+### Initialize
 
 First Init project
 
@@ -39,9 +41,12 @@ minio:
     minio-server:
       hosts:
         141.11.103.117:
+          host_hostname: storage
 ```
 
 If needed, you can also edit `vars` section at the bottom to match your environment.
+
+### Provisioning
 
 Start provisioning of the cluster using the following command:
 
@@ -52,6 +57,23 @@ cp ~/.kube/config ~/.kube/config-copy && cp ~/.kube/config.new ~/.kube/config
 kubectl config use-context k3s-ansible
 cd ..
 ```
+
+### Config Minio
+
+Config minio and get secret keys
+
+- Minio UI > Configuration > Region > set "us-east-1"
+- Minio UI > Buckets > Create Bucket (Bucket name: 'longhorn')
+- Minio UI > Buckets > choose longhorn bucket > change `Access Policy` to `Public`
+- Minio UI > Access Keys > Create access key (Write down the Access key and Secret Key)
+- Complete the longhorn-minio env at the terraform.tfvars
+
+```
+longhorn_minio_aws_access_key_id     = "echo -n access-key-from-previous-step | base64"
+longhorn_minio_aws_secret_access_key = "echo -n secret-key-from-previous-step | base64"
+```
+
+### Terraform
 
 Now it's time to edit the `terraform/terraform.tfvars` file to match your kubernetes setup. For example:
 
@@ -100,7 +122,14 @@ terraform init
 terraform apply
 ```
 
-### Authentications
+### Longhorn config
+
+- Longhorn UI > Setting > General
+- Search for `Backup Target` section and write it `s3://longhorn@us-east-1/`
+- Search for `Backup Target Credential Secret` section and write it `longhorn-minio-secret`
+- Save it
+
+## Authentications
 
 Argocd authentication:
 
@@ -119,52 +148,6 @@ Redis connection:
 - host: redis-master
 - port: 6379
 - username: leave it empty (default)
-
-## Minio
-
-Note:
-
-- Minio UI > Configuration > Region > set "us-east-1"
-- Minio UI > Access Keys > Create access key (Write down the Access key and Secret Key)
-- Minio UI > Buckets > Create Bucket
-
-```yaml
-Bucket Name: longhorn
-```
-
-- Minio UI > Buckets > choose longhorn bucket > change `Access Policy` to `Public`
-
-- Longhorn UI > Setting > General
-
-```yaml
-Backup Target: s3://longhorn@us-east-1/
-Backup Target Credential Secret: longhorn-minio-secret
-```
-
-- Create and Add secret to kubernetes
-
-```tf
-resource "kubernetes_manifest" "longhorn_minio_secret" {
-  manifest = {
-    apiVersion = "v1",
-    kind       = "Secret",
-    metadata = {
-      name      = "longhorn-minio-secret"
-      namespace = "longhorn-system"
-    },
-    type = "Opaque"
-    data = {
-      AWS_ACCESS_KEY_ID     = var.longhorn_minio_aws_access_key_id
-      AWS_SECRET_ACCESS_KEY = var.longhorn_minio_aws_secret_access_key
-      AWS_ENDPOINTS         = var.longhorn_minio_aws_endpoint
-    }
-  }
-
-  depends_on = [module.longhorn]
-}
-```
-
-- **Note**: After config minio, run again the terraform apply to set its secret
 
 ## Restore Backup (Longhorn volumes)
 
@@ -238,7 +221,7 @@ mcli ls k3s-ansible/longhorn
 #### Backup to local
 
 ```bash
-mcli mirror k3s-ansible/longhorn path-to-your-local-backup-folder/longhorn --overwrite
+mcli mirror k3s-ansible/longhorn path-to-your-local-backup-folder/longhorn --overwrite --retry --watch
 ```
 
 #### Restore from local
